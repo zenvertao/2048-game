@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2048 游戏</title>
+    <link rel="stylesheet" href="style_canvas.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>2048</h1>
+            <div class="scores-container">
+                <div class="score-box">
+                    <div class="score-title">分数</div>
+                    <div id="score">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-title">最高分</div>
+                    <div id="best-score">0</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="game-controls">
+            <div class="difficulty-selector">
+                <label for="difficulty">难度：</label>
+                <select id="difficulty">
+                    <option value="easy" selected>简单</option>
+                    <option value="normal">普通</option>
+                    <option value="hard">困难</option>
+                </select>
+            </div>
+            <button id="new-game-button">新游戏</button>
+        </div>
+        
+        <div class="game-container">
+            <!-- 使用Canvas替代原来的网格和方块 -->
+            <canvas id="game-canvas"></canvas>
+            
+            <div class="game-message">
+                <p></p>
+                <div class="actions">
+                    <button class="retry-button">再试一次</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-explanation">
+            <p><strong>游戏规则：</strong> 使用 <strong>方向键</strong>、<strong>鼠标滑动</strong> 或 <strong>触摸滑动</strong> 移动方块。当两个相同数字的方块碰到一起时，它们会合并成为它们的和！</p>
+            <p>本游戏适配手机和电脑，支持键盘、鼠标和触摸操作。</p>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
