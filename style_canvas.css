@@ -2,7 +2,7 @@
 
 /* 基础样式 */
 body {
-    font-family: "Comic Sans MS", "Marker Felt", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     background-color: #F5F5F5;
     color: #555;
     margin: 0;
@@ -31,15 +31,10 @@ header {
 
 h1 {
     font-size: 52px;
-    font-weight: bold;
+    font-weight: 800;
     margin: 0;
-    background: linear-gradient(135deg, #FF6D00 0%, #FF9100 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    text-shadow: 2px 2px 4px rgba(255, 109, 0, 0.2);
-    letter-spacing: 2px;
+    color: #776e65;
+    letter-spacing: 1px;
 }
 
 .scores-container {
@@ -50,10 +45,10 @@ h1 {
 
 .score-box {
     position: relative;
-    background: linear-gradient(135deg, #FF9100 0%, #FF6D00 100%);
+    background: #bbada0;
     padding: 10px 20px;
     border-radius: 8px;
-    color: white;
+    color: #fff;
     min-width: 90px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -66,17 +61,16 @@ h1 {
 }
 
 .score-title {
-    font-size: 13px;
-    opacity: 0.9;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 2px;
+    color: #eee4da;
 }
 
 #score, #best-score {
     font-size: 24px;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* 分数动画样式 */
@@ -92,6 +86,12 @@ h1 {
     z-index: 100;
     animation: score-pop 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     pointer-events: none;
+}
+
+/* 马卡龙主题下的分数动画色，增强对比 */
+body.theme-pastel .score-addition {
+    color: #d81b60;
+    text-shadow: 0 0 10px rgba(216, 27, 96, 0.35);
 }
 
 @keyframes score-pop {
@@ -123,7 +123,7 @@ h1 {
 }
 
 #new-game-button, .retry-button {
-    background-color: #4CAF50; /* 绿色 */
+    background-color: #8f7a66; /* 经典按钮色 */
     color: white;
     border: none;
     border-radius: 5px;
@@ -131,20 +131,20 @@ h1 {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 3px 0 #2E7D32;
+    box-shadow: 0 3px 0 #6f5f52;
     transition: all 0.2s;
     font-family: inherit;
 }
 
 #new-game-button:hover, .retry-button:hover {
-    background-color: #43A047;
+    background-color: #7c6a59;
     transform: translateY(-2px);
-    box-shadow: 0 5px 0 #2E7D32;
+    box-shadow: 0 5px 0 #6f5f52;
 }
 
 #new-game-button:active, .retry-button:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 0 #2E7D32;
+    box-shadow: 0 2px 0 #6f5f52;
 }
 
 /* 游戏控制区域样式 */
@@ -157,7 +157,7 @@ h1 {
     margin: 20px 0;
 }
 
-.difficulty-selector {
+.theme-selector, .difficulty-selector {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -166,29 +166,33 @@ h1 {
 
 .difficulty-selector label {
     color: #666;
-    font-weight: 600;
+    font-weight: 700; /* PC端加粗 */
 }
 
-.difficulty-selector select {
+/* 主题选择标签与难度标签保持一致权重 */
+.theme-selector label {
+    color: #666;
+    font-weight: 700; /* PC端加粗 */
+}
+
+.difficulty-selector select, .theme-selector select {
     padding: 8px 12px;
-    border: 2px solid #4CAF50;
+    border: 2px solid #8f7a66; /* 经典主题主色 */
     border-radius: 5px;
-    background-color: white;
-    color: #4CAF50;
+    background-color: #ffffff;
+    color: #8f7a66;
     font-family: inherit;
     font-size: 14px;
     cursor: pointer;
     outline: none;
     transition: all 0.2s;
 }
-
-.difficulty-selector select:hover {
+.difficulty-selector select:hover, .theme-selector select:hover {
     background-color: #F5F5F5;
 }
-
-.difficulty-selector select:focus {
-    border-color: #2E7D32;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+.difficulty-selector select:focus, .theme-selector select:focus {
+    border-color: #8f7a66;
+    box-shadow: 0 0 0 2px rgba(143, 122, 102, 0.2);
 }
 
 /* 游戏容器 */
@@ -232,6 +236,8 @@ h1 {
     text-align: center;
     animation: fade-in 0.5s;
     border-radius: 10px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .game-message p {
@@ -242,7 +248,7 @@ h1 {
     top: 30%;
     left: 0;
     right: 0;
-    color: #555;
+    color: inherit;
 }
 
 .game-message .actions {
@@ -258,8 +264,18 @@ h1 {
 }
 
 .game-message.game-over {
-    background-color: rgba(255, 218, 218, 0.9);
-    color: #E57373; /* 红色 */
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+}
+
+/* 暗色与霓虹主题下，为了与深背景拉开层次，使用主题色微透明遮罩 */
+body.theme-dark .game-message.game-over {
+    background-color: rgba(124, 77, 255, 0.18);
+    color: #E0E6ED;
+}
+body.theme-neon .game-message.game-over {
+    background-color: rgba(255, 46, 136, 0.22);
+    color: #FFFFFF;
 }
 
 /* 游戏说明 */
@@ -329,8 +345,14 @@ h1 {
     .difficulty-selector {
         justify-content: space-between;
     }
+
+    /* 移动端隐藏标签，避免换行拥挤 */
+    .difficulty-selector label,
+    .theme-selector label {
+        display: none;
+    }
     
-    .difficulty-selector select {
+    .difficulty-selector select, .theme-selector select {
         max-width: 80px; /* 限制选择框宽度 */
         padding: 8px 8px; /* 减小内边距 */
     }
@@ -339,6 +361,115 @@ h1 {
         padding: 8px 12px; /* 减小按钮内边距 */
         white-space: nowrap; /* 防止文字换行 */
     }
+}
+
+/* 主题：暗色 */
+body.theme-dark {
+    background-color: #0E141B;
+    color: #E0E6ED;
+}
+body.theme-dark .container {
+    background-color: #111821;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+/* 主题切换时，Logo 文本跟随主题色（保持纯色，不用渐变） */
+body.theme-dark h1 { color: #E0E6ED; }
+body.theme-dark .score-box {
+    background: linear-gradient(135deg, #00BCD4 0%, #7C4DFF 100%);
+}
+body.theme-dark .game-container {
+    background: linear-gradient(135deg, #1B2730 0%, #0F1A22 100%);
+}
+body.theme-dark #new-game-button, body.theme-dark .retry-button {
+    background-color: #7C4DFF;
+    box-shadow: 0 3px 0 #4A2DB6;
+}
+body.theme-dark #new-game-button:hover, body.theme-dark .retry-button:hover {
+    background-color: #6A3FF0;
+    box-shadow: 0 5px 0 #4A2DB6;
+}
+
+/* 主题下拉框与难度选择：跟随主题变换 */
+.theme-dark .difficulty-selector select,
+.theme-dark .theme-selector select {
+    background-color: #111821;
+    border-color: #7C4DFF;
+    color: #E0E6ED;
+}
+.theme-dark .difficulty-selector select:focus,
+.theme-dark .theme-selector select:focus {
+    box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.25);
+}
+
+/* 主题：马卡龙 */
+body.theme-pastel {
+    background-color: #FFF7FB;
+    color: #555;
+}
+body.theme-pastel .container {
+    background-color: #FFFFFF;
+}
+body.theme-pastel h1 { color: #81C784; }
+body.theme-pastel .score-box {
+    background: linear-gradient(135deg, #FFD1DC 0%, #FEC8D8 100%);
+    color: #4a4a4a; /* 提高对比 */
+}
+body.theme-pastel #score,
+body.theme-pastel #best-score {
+    color: #2f2f2f;
+}
+body.theme-pastel .score-title {
+    color: #6b6b6b;
+}
+body.theme-pastel .game-container {
+    background: linear-gradient(135deg, #F9F7F7 0%, #F1F1F1 100%);
+}
+body.theme-pastel #new-game-button, body.theme-pastel .retry-button {
+    background-color: #81C784;
+    box-shadow: 0 3px 0 #4C8C4A;
+}
+
+.theme-pastel .difficulty-selector select,
+.theme-pastel .theme-selector select {
+    background-color: #FFFFFF;
+    border-color: #81C784;
+    color: #81C784;
+}
+.theme-pastel .difficulty-selector select:focus,
+.theme-pastel .theme-selector select:focus {
+    box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.25);
+}
+
+/* 主题：霓虹 */
+body.theme-neon {
+    background-color: #0B0F19;
+    color: #E6EAF3;
+}
+body.theme-neon .container {
+    background-color: #0E1422;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.6);
+}
+body.theme-neon h1 { color: #FF2E88; }
+body.theme-neon .score-box {
+    background: linear-gradient(135deg, #00E5FF 0%, #FF00CC 100%);
+}
+body.theme-neon .game-container {
+    background: linear-gradient(135deg, #15162B 0%, #0C0D1A 100%);
+}
+body.theme-neon #new-game-button, body.theme-neon .retry-button {
+    background-color: #FF2E88;
+    box-shadow: 0 3px 0 #A11353;
+}
+
+.theme-neon .difficulty-selector select,
+.theme-neon .theme-selector select {
+    background-color: #0E1422;
+    border-color: #FF2E88;
+    color: #FF2E88;
+}
+.theme-neon .difficulty-selector select:focus,
+.theme-neon .theme-selector select:focus {
+    box-shadow: 0 0 0 2px rgba(255, 46, 136, 0.25);
 }
 
 @media screen and (max-width: 320px) {

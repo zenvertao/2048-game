@@ -8,12 +8,12 @@ class Game2048Canvas {
         this.gridRadius = 0; // 网格圆角
         this.containerPadding = 0; // 容器内边距
         
-        // 难度设置
+        // 难度设置（只定义一次）
         this.difficultySettings = {
             easy: {
                 fourProbability: 0.1,    // 出现4的概率
                 bonusMultiplier: 1.5,    // 分数加成
-                mergeBonus: 1.2          // 合并加成
+                mergeBonus: 1.2          // 合并加成（合并时单次加成）
             },
             normal: {
                 fourProbability: 0.2,
@@ -37,9 +37,12 @@ class Game2048Canvas {
         
         // 动画相关
         this.animationId = null;
-        this.animationDuration = 200; // 动画持续时间(毫秒)
         this.animationStartTime = 0;
-        this.tilesInAnimation = []; // 正在动画中的方块
+        this.tilesInAnimation = []; // 正在动画中的方块（移动阶段）
+        this.moveDuration = 140;    // 位移动画时长(ms)
+        this.popDuration = 160;     // 合并弹跳动画时长(ms)
+        this.popScale = 0.28;       // 合并弹跳的最大缩放幅度
+        this.mergePops = [];        // 合并完成后的弹跳动画
         
         // DOM元素
         this.canvas = document.getElementById('game-canvas');
@@ -47,28 +50,67 @@ class Game2048Canvas {
         this.scoreDisplay = document.getElementById('score');
         this.bestScoreDisplay = document.getElementById('best-score');
         this.messageContainer = document.querySelector('.game-message');
-        
-        // 难度设置
-        this.difficultySettings = {
-            easy: {
-                fourProbability: 0.1,    // 出现4的概率
-                bonusMultiplier: 1.5,    // 分数加成
-                mergeBonus: 1.2          // 合并加成
-            },
-            normal: {
-                fourProbability: 0.2,
-                bonusMultiplier: 1.0,
-                mergeBonus: 1.0
-            },
-            hard: {
-                fourProbability: 0.3,
-                bonusMultiplier: 0.8,
-                mergeBonus: 0.8
-            }
-        };
-        
         this.currentDifficulty = 'normal';
         this.difficultySelect = document.getElementById('difficulty');
+        // 以界面选择为准
+        if (this.difficultySelect) {
+            this.currentDifficulty = this.difficultySelect.value || this.currentDifficulty;
+        }
+
+        // 主题：定义与初始化
+        this.themes = {
+            classic: {
+                // 参考原版 2048 调色
+                boardBg: '#bbada0', // 棋盘背景
+                cellBg: '#cdc1b4',  // 空单元格
+                textLight: '#f9f6f2',
+                textDark: '#776e65',
+                threshold: 4,
+                tiles: {
+                    2: '#eee4da', 4: '#ede0c8', 8: '#f2b179', 16: '#f59563', 32: '#f67c5f', 64: '#f65e3b',
+                    128: '#edcf72', 256: '#edcc61', 512: '#edc850', 1024: '#edc53f', 2048: '#edc22e'
+                }
+            },
+            dark: {
+                boardBg: '#1A232B',
+                cellBg: '#2A343D',
+                textLight: '#ECEFF1',
+                textDark: '#ECEFF1',
+                threshold: 8,
+                tiles: {
+                    2: '#455A64', 4: '#546E7A', 8: '#26C6DA', 16: '#7E57C2', 32: '#FF7043', 64: '#FFA726',
+                    128: '#26A69A', 256: '#AB47BC', 512: '#42A5F5', 1024: '#66BB6A', 2048: '#FFEE58'
+                }
+            },
+            pastel: {
+                boardBg: '#F9F7F7',
+                cellBg: '#EAEAEA',
+                textLight: '#5D5A5A',
+                textDark: '#5D5A5A',
+                threshold: 8,
+                textMode: 'auto-contrast',
+                tiles: {
+                    2: '#FDE2E4', 4: '#E2ECE9', 8: '#E9F5DB', 16: '#FAD2E1', 32: '#BEE1E6', 64: '#CDE7BE',
+                    128: '#FAF3DD', 256: '#D0F4DE', 512: '#D7E3FC', 1024: '#F1C0E8', 2048: '#FFF3B0'
+                }
+            },
+            neon: {
+                boardBg: '#0F1020',
+                cellBg: '#1B1D36',
+                textLight: '#FFFFFF',
+                textDark: '#0F1020',
+                threshold: 8,
+                textMode: 'auto-contrast',
+                tiles: {
+                    2: '#39FF14', 4: '#14FFEC', 8: '#FCEE09', 16: '#FF2079', 32: '#00F0FF', 64: '#FF6B6B',
+                    128: '#7CFFCB', 256: '#FFD93D', 512: '#B980F0', 1024: '#00E676', 2048: '#FFD700'
+                }
+            }
+        };
+        this.themeSelect = document.getElementById('theme');
+        this.currentThemeName = localStorage.getItem('theme2048') || (this.themeSelect ? this.themeSelect.value : 'classic') || 'classic';
+        if (this.themeSelect) this.themeSelect.value = this.currentThemeName;
+        this.applyTheme();
         
         // 初始化
         this.initDimensions();
@@ -110,6 +152,8 @@ class Game2048Canvas {
         this.won = false;
         this.updateScore();
         this.clearMessage();
+        // 初始化最高分显示
+        this.bestScoreDisplay.textContent = this.bestScore;
         
         // 添加初始的两个方块
         this.addRandomTile();
@@ -189,7 +233,8 @@ class Game2048Canvas {
         const radius = this.gridRadius;
         
         // 绘制背景
-        this.ctx.fillStyle = '#E0F7FA'; // 游戏容器背景色
+        const theme = this.themes[this.currentThemeName];
+        this.ctx.fillStyle = theme.boardBg; // 游戏容器背景色
         this.roundRect(
             0, 
             0, 
@@ -200,7 +245,7 @@ class Game2048Canvas {
         this.ctx.fill();
         
         // 绘制网格单元格
-        this.ctx.fillStyle = '#CFD8DC'; // 网格单元格颜色
+        this.ctx.fillStyle = theme.cellBg; // 网格单元格颜色
         
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
@@ -214,18 +259,24 @@ class Game2048Canvas {
     }
     
     // 绘制方块
-    drawTiles() {
+    drawTiles(excludeDestinations = null) {
         const padding = this.containerPadding;
         const spacing = this.gridSpacing;
         const tileSize = this.tileSize;
         const radius = this.gridRadius;
 
-        for (let i = 0; i < this.size; i++) {
-            for (let j = 0; j < this.size; j++) {
-                const value = this.grid[i][j];
+        const topLeft = (row, col) => ({
+            x: padding + spacing + col * (tileSize + spacing),
+            y: padding + spacing + row * (tileSize + spacing)
+        });
+
+        for (let row = 0; row < this.size; row++) {
+            for (let col = 0; col < this.size; col++) {
+                const value = this.grid[row][col];
                 if (value) {
-                    const x = padding + spacing * (i + 1) + tileSize * i;
-                    const y = padding + spacing * (j + 1) + tileSize * j;
+                    // 在动画期间，避免绘制目标格子，防止和位移动画重复
+                    if (excludeDestinations && excludeDestinations.has(`${row},${col}`)) continue;
+                    const { x, y } = topLeft(row, col);
 
                     // 绘制方块背景
                     this.ctx.fillStyle = this.getTileColor(value);
@@ -238,11 +289,7 @@ class Game2048Canvas {
                     this.ctx.font = `bold ${fontSize}px Arial`;
                     this.ctx.textAlign = 'center';
                     this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(
-                        value.toString(),
-                        x + tileSize / 2,
-                        y + tileSize / 2
-                    );
+                    this.ctx.fillText(value.toString(), x + tileSize / 2, y + tileSize / 2);
                 }
             }
         }
@@ -250,26 +297,41 @@ class Game2048Canvas {
     
     // 获取方块颜色
     getTileColor(value) {
-        const colors = {
-            2: '#AED581',    // 浅绿色
-            4: '#81C784',    // 绿色
-            8: '#4FC3F7',    // 蓝色
-            16: '#7986CB',   // 靛蓝色
-            32: '#9575CD',   // 紫色
-            64: '#FFB74D',   // 橙色
-            128: '#FF8A65',  // 深橙色
-            256: '#F06292',  // 粉红色
-            512: '#BA68C8',  // 紫色
-            1024: '#4DB6AC', // 青色
-            2048: '#FFD54F'  // 金色
-        };
-        
-        return colors[value] || '#E57373'; // 默认红色
+        const theme = this.themes[this.currentThemeName];
+        return theme.tiles[value] || '#E57373'; // 默认备用色
     }
     
     // 获取文字颜色
     getTextColor(value) {
-        return value <= 4 ? '#33691E' : '#FFFFFF';
+        const theme = this.themes[this.currentThemeName];
+        // 自动对比：根据方块背景亮度选择文字颜色
+        if (theme.textMode === 'auto-contrast') {
+            const color = this.getTileColor(value);
+            const lum = this.getLuminance(color);
+            return lum > 0.6 ? theme.textDark : theme.textLight;
+        }
+        // 默认：根据数值阈值切换
+        return value <= theme.threshold ? theme.textDark : theme.textLight;
+    }
+
+    // 计算颜色相对亮度 (WCAG)
+    getLuminance(hex) {
+        const c = hex.replace('#','');
+        const r = parseInt(c.substring(0,2), 16) / 255;
+        const g = parseInt(c.substring(2,4), 16) / 255;
+        const b = parseInt(c.substring(4,6), 16) / 255;
+        const toLinear = v => (v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4));
+        const R = toLinear(r), G = toLinear(g), B = toLinear(b);
+        return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+    }
+
+    // Hex 颜色转 rgba 字符串
+    hexToRgba(hex, alpha = 1) {
+        const c = hex.replace('#','');
+        const r = parseInt(c.substring(0,2), 16);
+        const g = parseInt(c.substring(2,4), 16);
+        const b = parseInt(c.substring(4,6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
     
     // 获取字体大小
@@ -334,7 +396,8 @@ class Game2048Canvas {
                         
                         // 添加动画
                         this.tilesInAnimation.push({
-                            value: merged,
+                            moveValue: tile,       // 移动阶段显示原值
+                            mergedValue: merged,   // 合并后新值用于弹跳
                             fromX: x,
                             fromY: y,
                             toX: next.x,
@@ -342,9 +405,13 @@ class Game2048Canvas {
                             merged: true
                         });
                         
-                        // 更新分数
-                        const settings = this.difficultySettings[this.currentDifficulty];
-                        this.updateScore(merged * settings.mergeBonus);
+                        // 更新分数（在 updateScore 内部统一加成）
+                        this.updateScore(merged);
+
+                        // 胜利判断
+                        if (merged === 2048 && !this.won) {
+                            this.won = true;
+                        }
                         
                         moved = true;
                     } else {
@@ -355,7 +422,7 @@ class Game2048Canvas {
                             
                             // 添加动画
                             this.tilesInAnimation.push({
-                                value: tile,
+                                moveValue: tile,
                                 fromX: x,
                                 fromY: y,
                                 toX: farthest.x,
@@ -371,10 +438,160 @@ class Game2048Canvas {
         });
 
         if (moved) {
-            this.addRandomTile();
-            this.checkGameOver();
-            this.renderGame();
+            // 开启动画，动画完成后再生成新方块
+            this.startMoveAnimation();
         }
+    }
+
+    // 开始位移动画
+    startMoveAnimation() {
+        this.animating = true;
+        this.animationStartTime = performance.now();
+        if (this.animationId) cancelAnimationFrame(this.animationId);
+        this.animationId = requestAnimationFrame(this.animateMove.bind(this));
+    }
+
+    // 位移动画帧
+    animateMove(now) {
+        const elapsed = now - this.animationStartTime;
+        const t = Math.min(1, elapsed / this.moveDuration);
+        // ease-out
+        const ease = 1 - Math.pow(1 - t, 3);
+
+        // 目标格集合，避免重复绘制
+        const destSet = new Set(this.tilesInAnimation.map(a => `${a.toX},${a.toY}`));
+
+        // 背景 + 静态
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawGrid();
+        this.drawTiles(destSet);
+
+        // 绘制动画中的方块
+        this.drawAnimatingTiles(ease);
+
+        if (t < 1) {
+            this.animationId = requestAnimationFrame(this.animateMove.bind(this));
+        } else {
+            // 位移动画完成，准备合并弹跳
+            this.prepareMergePops();
+            if (this.mergePops.length > 0) {
+                this.animationStartTime = performance.now();
+                this.animationId = requestAnimationFrame(this.animatePop.bind(this));
+            } else {
+                this.finishAnimationCycle();
+            }
+        }
+    }
+
+    // 绘制动画中的方块（位移）
+    drawAnimatingTiles(progress) {
+        const padding = this.containerPadding;
+        const spacing = this.gridSpacing;
+        const tileSize = this.tileSize;
+        const radius = this.gridRadius;
+        const topLeft = (row, col) => ({
+            x: padding + spacing + col * (tileSize + spacing),
+            y: padding + spacing + row * (tileSize + spacing)
+        });
+
+        for (const anim of this.tilesInAnimation) {
+            const from = topLeft(anim.fromX, anim.fromY);
+            const to = topLeft(anim.toX, anim.toY);
+            const x = from.x + (to.x - from.x) * progress;
+            const y = from.y + (to.y - from.y) * progress;
+
+            const value = anim.moveValue;
+            this.ctx.fillStyle = this.getTileColor(value);
+            this.roundRect(x, y, tileSize, tileSize, radius);
+            this.ctx.fill();
+
+            const fontSize = this.getFontSize(value);
+            this.ctx.fillStyle = this.getTextColor(value);
+            this.ctx.font = `bold ${fontSize}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(value.toString(), x + tileSize / 2, y + tileSize / 2);
+        }
+    }
+
+    // 为合并准备弹跳动画数据
+    prepareMergePops() {
+        this.mergePops = [];
+        for (const anim of this.tilesInAnimation) {
+            if (anim.merged) {
+                this.mergePops.push({
+                    row: anim.toX,
+                    col: anim.toY,
+                    value: anim.mergedValue
+                });
+            }
+        }
+        this.tilesInAnimation = [];
+    }
+
+    // 合并弹跳动画帧
+    animatePop(now) {
+        const elapsed = now - this.animationStartTime;
+        const t = Math.min(1, elapsed / this.popDuration);
+        // scale ease: pop up then settle (sine up-down)
+        const scale = 1 + this.popScale * Math.sin(t * Math.PI);
+
+        // 背景 + 静态
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawGrid();
+        this.drawTiles();
+
+        // 绘制弹跳中的合并块
+        const padding = this.containerPadding;
+        const spacing = this.gridSpacing;
+        const tileSize = this.tileSize;
+        const radius = this.gridRadius;
+        const topLeft = (row, col) => ({
+            x: padding + spacing + col * (tileSize + spacing),
+            y: padding + spacing + row * (tileSize + spacing)
+        });
+
+        for (const p of this.mergePops) {
+            const pos = topLeft(p.row, p.col);
+            const cx = pos.x + tileSize / 2;
+            const cy = pos.y + tileSize / 2;
+            const w = tileSize * scale;
+            const h = tileSize * scale;
+            const x = cx - w / 2;
+            const y = cy - h / 2;
+
+            const fill = this.getTileColor(p.value);
+            this.ctx.fillStyle = fill;
+            // pop 阶段增加发光，强调合并
+            this.ctx.save();
+            this.ctx.shadowColor = this.hexToRgba(fill, 0.45);
+            this.ctx.shadowBlur = 18;
+            this.roundRect(x, y, w, h, radius);
+            this.ctx.fill();
+            this.ctx.restore();
+
+            const fontSize = this.getFontSize(p.value) * Math.min(1.1, scale + 0.02);
+            this.ctx.fillStyle = this.getTextColor(p.value);
+            this.ctx.font = `bold ${fontSize}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(p.value.toString(), cx, cy);
+        }
+
+        if (t < 1) {
+            this.animationId = requestAnimationFrame(this.animatePop.bind(this));
+        } else {
+            this.finishAnimationCycle();
+        }
+    }
+
+    // 动画收尾：添加新方块、检测结束并渲染
+    finishAnimationCycle() {
+        this.animating = false;
+        this.mergePops = [];
+        this.addRandomTile();
+        this.checkGameOver();
+        this.renderGame();
     }
 
     // 找到给定方向上的最远位置
@@ -402,11 +619,13 @@ class Game2048Canvas {
 
     // 获取方向向量
     getVector(direction) {
+        // 以 grid[row(x)][col(y)] 约定：
+        // 上: 行-1；下: 行+1；左: 列-1；右: 列+1
         const vectors = [
-            { x: 0, y: -1 },  // 上
-            { x: 0, y: 1 },   // 下
-            { x: -1, y: 0 },  // 左
-            { x: 1, y: 0 }    // 右
+            { x: -1, y: 0 },  // 上
+            { x: 1,  y: 0 },  // 下
+            { x: 0,  y: -1 }, // 左
+            { x: 0,  y: 1 }   // 右
         ];
         return vectors[direction];
     }
@@ -431,33 +650,7 @@ class Game2048Canvas {
         return traversals;
     }
     
-    // 获取下一个位置
-    getNextPosition(cell, direction) {
-        const directions = [
-            {x: 0, y: -1},  // 左
-            {x: 0, y: 1},   // 右
-            {x: -1, y: 0},  // 上
-            {x: 1, y: 0}    // 下
-        ];
-        
-        const vector = directions[direction];
-        const nextX = cell.x + vector.x;
-        const nextY = cell.y + vector.y;
-        
-        if (nextX < 0 || nextX >= this.size || nextY < 0 || nextY >= this.size) {
-            return null;
-        }
-        
-        return {x: nextX, y: nextY};
-    }
-    
-    // 获取下一个方块
-    getNextTile(cell, direction) {
-        const next = this.getNextPosition(cell, direction);
-        if (!next) return null;
-        
-        return next;
-    }
+    // 移除未使用的获取下一个位置方法，避免坐标语义混淆
     
     // 检查是否有可能的移动
     hasPossibleMoves() {
@@ -470,12 +663,12 @@ class Game2048Canvas {
                 const tile = this.grid[i][j];
                 if (tile) {
                     // 检查右侧
-                    if (j < this.size - 1 && this.grid[i][j + 1] && this.grid[i][j + 1].value === tile.value) {
+                    if (j < this.size - 1 && this.grid[i][j + 1] && this.grid[i][j + 1] === tile) {
                         return true;
                     }
                     
                     // 检查下方
-                    if (i < this.size - 1 && this.grid[i + 1][j] && this.grid[i + 1][j].value === tile.value) {
+                    if (i < this.size - 1 && this.grid[i + 1][j] && this.grid[i + 1][j] === tile) {
                         return true;
                     }
                 }
@@ -496,7 +689,7 @@ class Game2048Canvas {
     updateScore(addedScore) {
         if (addedScore) {
             const settings = this.difficultySettings[this.currentDifficulty];
-            const bonus = Math.round(addedScore * settings.bonusMultiplier * settings.mergeBonus);
+            const bonus = Math.round(addedScore * settings.bonusMultiplier);
             this.score += bonus;
             
             // 移除旧的分数动画元素
@@ -649,6 +842,28 @@ class Game2048Canvas {
         window.addEventListener('resize', () => {
             this.initDimensions();
         });
+
+        // 主题切换
+        if (this.themeSelect) {
+            this.themeSelect.addEventListener('change', () => {
+                const nextTheme = this.themeSelect.value;
+                if (nextTheme !== this.currentThemeName) {
+                    this.currentThemeName = nextTheme;
+                    localStorage.setItem('theme2048', this.currentThemeName);
+                    this.applyTheme();
+                    this.renderAllTiles();
+                }
+            });
+        }
+    }
+
+    // 应用主题到页面（CSS 以及 Canvas）
+    applyTheme() {
+        const body = document.body;
+        body.classList.remove('theme-dark', 'theme-pastel', 'theme-neon');
+        if (this.currentThemeName !== 'classic') {
+            body.classList.add(`theme-${this.currentThemeName}`);
+        }
     }
 }
 
