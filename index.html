@@ -40,12 +40,16 @@
                     <option value="hard">困难</option>
                 </select>
             </div>
-            <button id="new-game-button">新游戏</button>
         </div>
         
         <div class="game-container">
             <!-- 使用Canvas替代原来的网格和方块 -->
             <canvas id="game-canvas"></canvas>
+            
+            <!-- 游戏开始/重新开始按钮 -->
+            <div class="game-start-overlay" id="game-start-overlay">
+                <button class="start-game-button" id="start-game-button">开始游戏</button>
+            </div>
             
             <div class="game-message">
                 <p></p>
@@ -61,6 +65,6 @@
         </div>
     </div>
     
-    <script src="game.js"></script>
+    <script type="module" src="src/main.js"></script>
 </body>
 </html>

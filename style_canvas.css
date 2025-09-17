@@ -1,6 +1,12 @@
-/* 2048游戏 - Canvas版样式 */
+/* ========================================
+   2048游戏 - Canvas版样式表
+   ======================================== */
 
-/* 基础样式 */
+/* ========================================
+   1. 基础样式与布局
+   ======================================== */
+
+/* 全局样式 */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     background-color: #F5F5F5;
@@ -10,16 +16,19 @@ body {
     font-size: 18px;
 }
 
+/* 主容器 */
 .container {
     max-width: 500px;
     margin: 0 auto;
-    background-color: #FFFFFF;
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* 标题和分数 */
+/* ========================================
+   2. 页头区域 - 标题与分数
+   ======================================== */
+
+/* 页头布局 */
 header {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -29,6 +38,7 @@ header {
     padding: 5px 0;
 }
 
+/* 游戏标题 */
 h1 {
     font-size: 52px;
     font-weight: 800;
@@ -37,12 +47,14 @@ h1 {
     letter-spacing: 1px;
 }
 
+/* 分数容器 */
 .scores-container {
     justify-self: end;
     display: flex;
     gap: 12px;
 }
 
+/* 分数盒子样式 */
 .score-box {
     position: relative;
     background: #bbada0;
@@ -60,6 +72,7 @@ h1 {
     transform: translateY(-2px);
 }
 
+/* 分数标题 */
 .score-title {
     font-size: 12px;
     text-transform: uppercase;
@@ -68,12 +81,17 @@ h1 {
     color: #eee4da;
 }
 
+/* 分数数值 */
 #score, #best-score {
     font-size: 24px;
     font-weight: bold;
 }
 
-/* 分数动画样式 */
+/* ========================================
+   3. 分数动画效果
+   ======================================== */
+
+/* 分数增加动画 */
 .score-addition {
     position: absolute;
     left: 50%;
@@ -88,12 +106,13 @@ h1 {
     pointer-events: none;
 }
 
-/* 马卡龙主题下的分数动画色，增强对比 */
+/* 马卡龙主题下的分数动画色彩调整 */
 body.theme-pastel .score-addition {
     color: #d81b60;
     text-shadow: 0 0 10px rgba(216, 27, 96, 0.35);
 }
 
+/* 分数弹出动画关键帧 */
 @keyframes score-pop {
     0% {
         transform: translate(-50%, -50%) scale(0.8);
@@ -109,7 +128,11 @@ body.theme-pastel .score-addition {
     }
 }
 
-/* 游戏介绍和按钮 */
+/* ========================================
+   4. 控制区域 - 按钮与选择器
+   ======================================== */
+
+/* 游戏介绍和按钮区域 */
 .above-game {
     display: flex;
     justify-content: space-between;
@@ -122,7 +145,8 @@ body.theme-pastel .score-addition {
     line-height: 1.2;
 }
 
-#new-game-button, .retry-button {
+/* 重试按钮样式 */
+.retry-button {
     background-color: #8f7a66; /* 经典按钮色 */
     color: white;
     border: none;
@@ -136,27 +160,28 @@ body.theme-pastel .score-addition {
     font-family: inherit;
 }
 
-#new-game-button:hover, .retry-button:hover {
+.retry-button:hover {
     background-color: #7c6a59;
     transform: translateY(-2px);
     box-shadow: 0 5px 0 #6f5f52;
 }
 
-#new-game-button:active, .retry-button:active {
+.retry-button:active {
     transform: translateY(1px);
     box-shadow: 0 2px 0 #6f5f52;
 }
 
-/* 游戏控制区域样式 */
+/* 游戏控制区域布局 */
 .game-controls {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center; /* 居中显示 */
     align-items: center;
-    gap: 15px;
+    gap: 20px; /* 增加间距 */
     width: 100%;
     margin: 20px 0;
 }
 
+/* 主题和难度选择器 */
 .theme-selector, .difficulty-selector {
     display: flex;
     align-items: center;
@@ -164,17 +189,13 @@ body.theme-pastel .score-addition {
     font-size: 16px;
 }
 
-.difficulty-selector label {
+/* 选择器标签 */
+.difficulty-selector label, .theme-selector label {
     color: #666;
     font-weight: 700; /* PC端加粗 */
 }
 
-/* 主题选择标签与难度标签保持一致权重 */
-.theme-selector label {
-    color: #666;
-    font-weight: 700; /* PC端加粗 */
-}
-
+/* 选择器下拉框 */
 .difficulty-selector select, .theme-selector select {
     padding: 8px 12px;
     border: 2px solid #8f7a66; /* 经典主题主色 */
@@ -187,13 +208,20 @@ body.theme-pastel .score-addition {
     outline: none;
     transition: all 0.2s;
 }
+
 .difficulty-selector select:hover, .theme-selector select:hover {
     background-color: #F5F5F5;
 }
+
 .difficulty-selector select:focus, .theme-selector select:focus {
     border-color: #8f7a66;
     box-shadow: 0 0 0 2px rgba(143, 122, 102, 0.2);
 }
+
+
+/* ========================================
+   5. 游戏画面区域
+   ======================================== */
 
 /* 游戏容器 */
 .game-container {
@@ -213,7 +241,7 @@ body.theme-pastel .score-addition {
     transform: translateY(-2px);
 }
 
-/* Canvas样式 */
+/* Canvas绘图元素 */
 #game-canvas {
     position: absolute;
     top: 0;
@@ -223,7 +251,62 @@ body.theme-pastel .score-addition {
     touch-action: none; /* 防止触摸设备上的默认行为 */
 }
 
-/* 游戏消息 */
+/* 游戏开始遮罩层 */
+.game-start-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    z-index: 50;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: opacity 0.3s ease;
+}
+
+.game-start-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 开始游戏按钮 */
+.start-game-button {
+    background-color: #8f7a66;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 32px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #6f5f52, 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.start-game-button:hover {
+    background-color: #a08977;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #6f5f52, 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.start-game-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 4px 0 #6f5f52, 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ========================================
+   6. 游戏状态提示
+   ======================================== */
+
+/* 游戏结束/胜利消息 */
 .game-message {
     display: none;
     position: absolute;
@@ -240,6 +323,7 @@ body.theme-pastel .score-addition {
     -webkit-backdrop-filter: blur(4px);
 }
 
+/* 消息文字 */
 .game-message p {
     font-size: 36px;
     font-weight: bold;
@@ -251,6 +335,7 @@ body.theme-pastel .score-addition {
     color: inherit;
 }
 
+/* 消息操作按钮 */
 .game-message .actions {
     position: absolute;
     top: 60%;
@@ -258,11 +343,13 @@ body.theme-pastel .score-addition {
     right: 0;
 }
 
+/* 胜利状态样式 */
 .game-message.game-won {
     background-color: rgba(237, 255, 188, 0.9);
     color: #FFD54F; /* 金色 */
 }
 
+/* 游戏结束状态样式 */
 .game-message.game-over {
     background-color: rgba(0, 0, 0, 0.6);
     color: #ffffff;
@@ -273,12 +360,18 @@ body.theme-dark .game-message.game-over {
     background-color: rgba(124, 77, 255, 0.18);
     color: #E0E6ED;
 }
+
 body.theme-neon .game-message.game-over {
     background-color: rgba(255, 46, 136, 0.22);
     color: #FFFFFF;
 }
 
-/* 游戏说明 */
+
+/* ========================================
+   7. 游戏说明区域
+   ======================================== */
+
+/* 游戏说明文字 */
 .game-explanation {
     margin-top: 20px;
     border-top: 1px solid #E0E0E0;
@@ -288,19 +381,29 @@ body.theme-neon .game-message.game-over {
     line-height: 1.5;
 }
 
-/* 动画 */
+/* ========================================
+   8. 动画效果
+   ======================================== */
+
+/* 淡入动画 */
 @keyframes fade-in {
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
 
-/* 移动设备适配优化 */
+
+/* ========================================
+   9. 响应式设计 - 移动设备适配
+   ======================================== */
+
 @media screen and (max-width: 520px) {
+    /* 基础布局调整 */
     body {
         font-size: 16px;
         padding: 10px;
     }
     
+    /* 页头区域调整 */
     header {
         gap: 12px;
     }
@@ -310,6 +413,7 @@ body.theme-neon .game-message.game-over {
         letter-spacing: 1px;
     }
     
+    /* 分数区域调整 */
     .score-box {
         padding: 5px 10px;
         min-width: 60px;
@@ -319,23 +423,34 @@ body.theme-neon .game-message.game-over {
         font-size: 18px;
     }
     
+    /* 游戏介绍调整 */
     .game-intro {
         font-size: 14px;
     }
     
-    #new-game-button, .retry-button {
+    /* 按钮调整 */
+    .retry-button {
         padding: 8px 15px;
         font-size: 14px;
     }
     
+    /* 开始游戏按钮调整 */
+    .start-game-button {
+        padding: 14px 28px;
+        font-size: 18px;
+    }
+    
+    /* 游戏消息调整 */
     .game-message p {
         font-size: 28px;
     }
     
+    /* 说明文字调整 */
     .game-explanation {
         font-size: 14px;
     }
     
+    /* 控制区域调整 */
     .game-controls {
         flex-direction: row; /* 保持水平布局 */
         flex-wrap: nowrap; /* 防止换行 */
@@ -346,131 +461,209 @@ body.theme-neon .game-message.game-over {
         justify-content: space-between;
     }
 
-    /* 移动端隐藏标签，避免换行拥挤 */
+    /* 移动端显示标签，现在位置够了 */
     .difficulty-selector label,
     .theme-selector label {
-        display: none;
+        display: inline;
+        font-size: 14px;
     }
     
     .difficulty-selector select, .theme-selector select {
-        max-width: 80px; /* 限制选择框宽度 */
-        padding: 8px 8px; /* 减小内边距 */
-    }
-    
-    #new-game-button {
-        padding: 8px 12px; /* 减小按钮内边距 */
-        white-space: nowrap; /* 防止文字换行 */
+        max-width: 100px; /* 增加选择框宽度 */
+        padding: 8px 10px;
     }
 }
 
-/* 主题：暗色 */
+
+/* ========================================
+   10. 主题样式 - 暗色主题
+   ======================================== */
+
 body.theme-dark {
     background-color: #0E141B;
     color: #E0E6ED;
 }
-body.theme-dark .container {
-    background-color: #111821;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+
+/* 暗色主题下的标题色彩 */
+body.theme-dark h1 { 
+    color: #E0E6ED; 
 }
-/* 主题切换时，Logo 文本跟随主题色（保持纯色，不用渐变） */
-body.theme-dark h1 { color: #E0E6ED; }
+
+/* 暗色主题下的分数容器 */
 body.theme-dark .score-box {
     background: linear-gradient(135deg, #00BCD4 0%, #7C4DFF 100%);
 }
+
+/* 暗色主题下的游戏容器 */
 body.theme-dark .game-container {
     background: linear-gradient(135deg, #1B2730 0%, #0F1A22 100%);
+    box-shadow: 0 8px 20px rgba(124, 77, 255, 0.3), 0 4px 10px rgba(0, 0, 0, 0.5);
 }
-body.theme-dark #new-game-button, body.theme-dark .retry-button {
+
+/* 暗色主题下的按钮样式 */
+body.theme-dark #new-game-button, 
+body.theme-dark .retry-button,
+body.theme-dark .start-game-button {
     background-color: #7C4DFF;
     box-shadow: 0 3px 0 #4A2DB6;
 }
-body.theme-dark #new-game-button:hover, body.theme-dark .retry-button:hover {
+
+body.theme-dark #new-game-button:hover, 
+body.theme-dark .retry-button:hover,
+body.theme-dark .start-game-button:hover {
     background-color: #6A3FF0;
     box-shadow: 0 5px 0 #4A2DB6;
 }
 
-/* 主题下拉框与难度选择：跟随主题变换 */
+/* 暗色主题下的下拉框样式 */
 .theme-dark .difficulty-selector select,
 .theme-dark .theme-selector select {
     background-color: #111821;
     border-color: #7C4DFF;
     color: #E0E6ED;
 }
+
 .theme-dark .difficulty-selector select:focus,
 .theme-dark .theme-selector select:focus {
     box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.25);
 }
 
-/* 主题：马卡龙 */
+/* 暗色主题下的遮罩层 */
+body.theme-dark .game-start-overlay {
+    background: rgba(30, 30, 35, 0.95);
+}
+
+
+/* ========================================
+   11. 主题样式 - 马卡龙主题
+   ======================================== */
+
 body.theme-pastel {
     background-color: #FFF7FB;
     color: #555;
 }
-body.theme-pastel .container {
-    background-color: #FFFFFF;
+
+/* 马卡龙主题下的标题色彩 */
+body.theme-pastel h1 { 
+    color: #81C784; 
 }
-body.theme-pastel h1 { color: #81C784; }
+
+/* 马卡龙主题下的分数容器 */
 body.theme-pastel .score-box {
     background: linear-gradient(135deg, #FFD1DC 0%, #FEC8D8 100%);
     color: #4a4a4a; /* 提高对比 */
 }
+
 body.theme-pastel #score,
 body.theme-pastel #best-score {
     color: #2f2f2f;
 }
+
 body.theme-pastel .score-title {
     color: #6b6b6b;
 }
+
+/* 马卡龙主题下的游戏容器 */
 body.theme-pastel .game-container {
     background: linear-gradient(135deg, #F9F7F7 0%, #F1F1F1 100%);
 }
-body.theme-pastel #new-game-button, body.theme-pastel .retry-button {
+
+/* 马卡龙主题下的按钮样式 */
+body.theme-pastel #new-game-button, 
+body.theme-pastel .retry-button,
+body.theme-pastel .start-game-button {
     background-color: #81C784;
     box-shadow: 0 3px 0 #4C8C4A;
 }
 
+body.theme-pastel #new-game-button:hover, 
+body.theme-pastel .retry-button:hover,
+body.theme-pastel .start-game-button:hover {
+    background-color: #66BB6A;
+    box-shadow: 0 5px 0 #4C8C4A;
+}
+
+/* 马卡龙主题下的下拉框样式 */
 .theme-pastel .difficulty-selector select,
 .theme-pastel .theme-selector select {
     background-color: #FFFFFF;
     border-color: #81C784;
     color: #81C784;
 }
+
 .theme-pastel .difficulty-selector select:focus,
 .theme-pastel .theme-selector select:focus {
     box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.25);
 }
 
-/* 主题：霓虹 */
+/* 马卡龙主题下的遮罩层 */
+body.theme-pastel .game-start-overlay {
+    background: rgba(255, 255, 255, 0.98);
+}
+
+
+/* ========================================
+   12. 主题样式 - 霓虹主题
+   ======================================== */
+
 body.theme-neon {
     background-color: #0B0F19;
     color: #E6EAF3;
 }
-body.theme-neon .container {
-    background-color: #0E1422;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.6);
+
+/* 霓虹主题下的标题色彩 */
+body.theme-neon h1 { 
+    color: #FF2E88; 
 }
-body.theme-neon h1 { color: #FF2E88; }
+
+/* 霓虹主题下的分数容器 */
 body.theme-neon .score-box {
     background: linear-gradient(135deg, #00E5FF 0%, #FF00CC 100%);
 }
+
+/* 霓虹主题下的游戏容器 */
 body.theme-neon .game-container {
     background: linear-gradient(135deg, #15162B 0%, #0C0D1A 100%);
+    box-shadow: 0 8px 20px rgba(255, 46, 136, 0.4), 0 4px 10px rgba(0, 188, 212, 0.3), 0 0 30px rgba(255, 46, 136, 0.1);
 }
-body.theme-neon #new-game-button, body.theme-neon .retry-button {
+
+/* 霓虹主题下的按钮样式 */
+body.theme-neon #new-game-button, 
+body.theme-neon .retry-button,
+body.theme-neon .start-game-button {
     background-color: #FF2E88;
     box-shadow: 0 3px 0 #A11353;
 }
 
+body.theme-neon #new-game-button:hover, 
+body.theme-neon .retry-button:hover,
+body.theme-neon .start-game-button:hover {
+    background-color: #E91E63;
+    box-shadow: 0 5px 0 #A11353;
+}
+
+/* 霓虹主题下的下拉框样式 */
 .theme-neon .difficulty-selector select,
 .theme-neon .theme-selector select {
     background-color: #0E1422;
     border-color: #FF2E88;
     color: #FF2E88;
 }
+
 .theme-neon .difficulty-selector select:focus,
 .theme-neon .theme-selector select:focus {
     box-shadow: 0 0 0 2px rgba(255, 46, 136, 0.25);
 }
+
+/* 霓虹主题下的遮罩层 */
+body.theme-neon .game-start-overlay {
+    background: rgba(11, 15, 25, 0.95);
+}
+
+
+/* ========================================
+   13. 超小屏幕适配 (320px 以下)
+   ======================================== */
 
 @media screen and (max-width: 320px) {
     h1 {

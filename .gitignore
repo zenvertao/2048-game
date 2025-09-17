@@ -1,0 +1,5 @@
+.vscode/
+.claude/
+
+# Backup files
+bak/
