@@ -456,7 +456,7 @@ body.theme-neon .game-message.game-over {
         flex-wrap: nowrap; /* 防止换行 */
         gap: 8px; /* 减小间距 */
     }
-    
+
     .difficulty-selector {
         justify-content: space-between;
     }
@@ -467,10 +467,20 @@ body.theme-neon .game-message.game-over {
         display: inline;
         font-size: 14px;
     }
-    
+
     .difficulty-selector select, .theme-selector select {
         max-width: 100px; /* 增加选择框宽度 */
         padding: 8px 10px;
+    }
+
+    /* 移动端显示控制 */
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only,
+    .mobile-github-link.mobile-only {
+        display: block !important;
     }
 }
 
@@ -531,6 +541,27 @@ body.theme-dark .start-game-button:hover {
 /* 暗色主题下的遮罩层 */
 body.theme-dark .game-start-overlay {
     background: rgba(30, 30, 35, 0.95);
+}
+
+/* 暗色主题下的 GitHub 链接 */
+body.theme-dark .github-link.desktop-only {
+    background: rgba(224, 230, 237, 0.9);
+    color: #7C4DFF;
+}
+
+body.theme-dark .github-link.desktop-only:hover {
+    background: rgba(224, 230, 237, 1);
+}
+
+body.theme-dark .mobile-github-link a {
+    background: #1B2730;
+    border-color: #7C4DFF;
+    color: #E0E6ED;
+}
+
+body.theme-dark .mobile-github-link a:hover {
+    background: #2A3A47;
+    color: #FFFFFF;
 }
 
 
@@ -601,6 +632,27 @@ body.theme-pastel .game-start-overlay {
     background: rgba(255, 255, 255, 0.98);
 }
 
+/* 马卡龙主题下的 GitHub 链接 */
+body.theme-pastel .github-link.desktop-only {
+    background: rgba(255, 255, 255, 0.95);
+    color: #81C784;
+}
+
+body.theme-pastel .github-link.desktop-only:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+body.theme-pastel .mobile-github-link a {
+    background: #FFFFFF;
+    border-color: #81C784;
+    color: #81C784;
+}
+
+body.theme-pastel .mobile-github-link a:hover {
+    background: #F1F8E9;
+    color: #66BB6A;
+}
+
 
 /* ========================================
    12. 主题样式 - 霓虹主题
@@ -660,9 +712,99 @@ body.theme-neon .game-start-overlay {
     background: rgba(11, 15, 25, 0.95);
 }
 
+/* 霓虹主题下的 GitHub 链接 */
+body.theme-neon .github-link.desktop-only {
+    background: rgba(230, 234, 243, 0.9);
+    color: #FF2E88;
+}
+
+body.theme-neon .github-link.desktop-only:hover {
+    background: rgba(230, 234, 243, 1);
+}
+
+body.theme-neon .mobile-github-link a {
+    background: #15162B;
+    border-color: #FF2E88;
+    color: #E6EAF3;
+}
+
+body.theme-neon .mobile-github-link a:hover {
+    background: #1F2037;
+    color: #FFFFFF;
+}
+
 
 /* ========================================
-   13. 超小屏幕适配 (320px 以下)
+   14. GitHub 链接样式
+   ======================================== */
+
+/* 桌面端 GitHub 链接 - 右上角 */
+.github-link.desktop-only {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.github-link.desktop-only:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 移动端 GitHub 链接 - 底部 */
+.mobile-github-link.mobile-only {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #E0E0E0;
+    text-align: center;
+    display: none; /* 默认隐藏 */
+}
+
+.mobile-github-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #495057;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.mobile-github-link a:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #212529;
+}
+
+/* 响应式显示控制 */
+.desktop-only {
+    display: flex;
+}
+
+.mobile-only {
+    display: none;
+}
+
+/* ========================================
+   15. 超小屏幕适配 (320px 以下)
    ======================================== */
 
 @media screen and (max-width: 320px) {
