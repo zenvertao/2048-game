@@ -2,6 +2,7 @@
 
 <div align="center">
   <p>一个 Canvas 实现的现代化 2048 网页游戏</p>
+  <p><a href="https://zenvertao.github.io/2048-game/">🎮 在线演示</a></p>
   <p>中文 | <a href="README.en.md">English</a></p>
 </div>
 
