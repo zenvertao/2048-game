@@ -546,7 +546,6 @@ body.theme-dark .game-start-overlay {
 /* 暗色主题下的 GitHub 链接 */
 body.theme-dark .github-link.desktop-only {
     background: rgba(224, 230, 237, 0.9);
-    color: #7C4DFF;
 }
 
 body.theme-dark .github-link.desktop-only:hover {
@@ -562,6 +561,11 @@ body.theme-dark .mobile-github-link a {
 body.theme-dark .mobile-github-link a:hover {
     background: #2A3A47;
     color: #FFFFFF;
+}
+
+/* 深色主题下移动端GitHub图标使用白色 */
+body.theme-dark .github-icon-mobile {
+    fill: #FFFFFF !important;
 }
 
 
@@ -635,7 +639,6 @@ body.theme-pastel .game-start-overlay {
 /* 马卡龙主题下的 GitHub 链接 */
 body.theme-pastel .github-link.desktop-only {
     background: rgba(255, 255, 255, 0.95);
-    color: #81C784;
 }
 
 body.theme-pastel .github-link.desktop-only:hover {
@@ -715,7 +718,6 @@ body.theme-neon .game-start-overlay {
 /* 霓虹主题下的 GitHub 链接 */
 body.theme-neon .github-link.desktop-only {
     background: rgba(230, 234, 243, 0.9);
-    color: #FF2E88;
 }
 
 body.theme-neon .github-link.desktop-only:hover {
@@ -731,6 +733,11 @@ body.theme-neon .mobile-github-link a {
 body.theme-neon .mobile-github-link a:hover {
     background: #1F2037;
     color: #FFFFFF;
+}
+
+/* 霓虹主题下移动端GitHub图标使用白色 */
+body.theme-neon .github-icon-mobile {
+    fill: #FFFFFF !important;
 }
 
 

@@ -272,6 +272,75 @@ export class UIManager {
             body.theme-dark .confirm-ok:hover {
                 background: #6A3FF0;
             }
+
+            /* 马卡龙主题适配 */
+            body.theme-pastel .confirm-dialog {
+                background: #FFFFFF;
+                color: #555;
+                border: 2px solid #FFD1DC;
+            }
+
+            body.theme-pastel .confirm-content h3 {
+                color: #81C784;
+            }
+
+            body.theme-pastel .confirm-content p {
+                color: #666;
+            }
+
+            body.theme-pastel .confirm-cancel {
+                background: #F5F5F5;
+                color: #888;
+                border: 1px solid #E0E0E0;
+            }
+
+            body.theme-pastel .confirm-cancel:hover {
+                background: #EEEEEE;
+            }
+
+            body.theme-pastel .confirm-ok {
+                background: #81C784;
+                color: #FFFFFF;
+            }
+
+            body.theme-pastel .confirm-ok:hover {
+                background: #66BB6A;
+            }
+
+            /* 霓虹主题适配 */
+            body.theme-neon .confirm-dialog {
+                background: #0E1422;
+                color: #E6EAF3;
+                border: 2px solid #FF2E88;
+                box-shadow: 0 0 20px rgba(255, 46, 136, 0.3);
+            }
+
+            body.theme-neon .confirm-content h3 {
+                color: #FF2E88;
+            }
+
+            body.theme-neon .confirm-content p {
+                color: #B0BEC5;
+            }
+
+            body.theme-neon .confirm-cancel {
+                background: #1A1E2E;
+                color: #B0BEC5;
+                border: 1px solid #37474F;
+            }
+
+            body.theme-neon .confirm-cancel:hover {
+                background: #263238;
+            }
+
+            body.theme-neon .confirm-ok {
+                background: #FF2E88;
+                color: #FFFFFF;
+            }
+
+            body.theme-neon .confirm-ok:hover {
+                background: #E91E63;
+            }
         `;
         
         document.head.appendChild(style);
